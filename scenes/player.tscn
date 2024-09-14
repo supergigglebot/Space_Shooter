@@ -1,0 +1,108 @@
+[gd_scene load_steps=12 format=3 uid="uid://c67ggmixslvjp"]
+
+[ext_resource type="Texture2D" uid="uid://b56nt1bjv77wp" path="res://PNG/playerShip2_red.png" id="1_oouk6"]
+[ext_resource type="Script" path="res://scenes/player.gd" id="1_qqc0f"]
+[ext_resource type="Texture2D" uid="uid://bhasvcqrv7b7r" path="res://PNG/Transparency.png" id="3_cu8d1"]
+[ext_resource type="AudioStream" uid="uid://esiia7s7cxdj" path="res://Sounds/sfx_laser2.ogg" id="3_yuydc"]
+[ext_resource type="AudioStream" uid="uid://cd6ujjxfewbor" path="res://Sounds/damage.wav" id="4_1scjd"]
+
+[sub_resource type="Curve" id="Curve_wcaok"]
+_data = [Vector2(0.0133333, 0.67033), 0.0, 0.0, 0, 0, Vector2(1, 0.043956), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_u6fjp"]
+curve = SubResource("Curve_wcaok")
+
+[sub_resource type="Gradient" id="Gradient_fpf7c"]
+colors = PackedColorArray(1, 0, 0, 1, 1, 0.572549, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nmvbg"]
+gradient = SubResource("Gradient_fpf7c")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tpx3i"]
+particle_flag_disable_z = true
+angle_min = 116.2
+angle_max = 263.3
+gravity = Vector3(0, 100, 0)
+scale_min = 5.0
+scale_max = 15.0
+color = Color(1, 0, 0, 1)
+color_ramp = SubResource("GradientTexture1D_nmvbg")
+alpha_curve = SubResource("CurveTexture_u6fjp")
+hue_variation_min = 0.04
+hue_variation_max = 0.09
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1aru6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_oouk6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_cu8d1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_oouk6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_cu8d1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_oouk6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_cu8d1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_oouk6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_cu8d1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_oouk6")
+}],
+"loop": false,
+"name": &"damage",
+"speed": 5.0
+}]
+
+[node name="player" type="CharacterBody2D"]
+collision_mask = 6
+script = ExtResource("1_qqc0f")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+position = Vector2(0, 37)
+process_material = SubResource("ParticleProcessMaterial_tpx3i")
+lifetime = 0.4
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_1aru6")
+animation = &"damage"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-4, -37, 3, -37, 11, -16, 56, 5, 37, 35, 17, 30, 12, 37, -12, 37, -17, 29, -38, 35, -56, 6, -11, -17)
+
+[node name="LaserTimer" type="Timer" parent="."]
+wait_time = 0.25
+one_shot = true
+
+[node name="LaserStartPos" type="Marker2D" parent="."]
+position = Vector2(0, -38)
+
+[node name="LaserSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_yuydc")
+volume_db = 3.0
+bus = &"SFX"
+
+[node name="DamageSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_1scjd")
+volume_db = 7.0
+bus = &"SFX"
+
+[node name="IFrameTimer" type="Timer" parent="."]
+wait_time = 1.5
+one_shot = true
+
+[connection signal="timeout" from="LaserTimer" to="." method="_on_laser_timer_timeout"]
+[connection signal="timeout" from="IFrameTimer" to="." method="_on_i_frame_timer_timeout"]

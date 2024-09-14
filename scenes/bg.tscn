@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://7cyyt761nl1o"]
+
+[ext_resource type="Script" path="res://scenes/bg.gd" id="1_wfgde"]
+
+[node name="Background Movement" type="Node2D"]
+script = ExtResource("1_wfgde")
+
+[node name="Stars" type="Node2D" parent="."]
+
+[node name="StarTimer" type="Timer" parent="."]
+wait_time = 0.25
+autostart = true
+
+[connection signal="timeout" from="StarTimer" to="." method="_on_star_timer_timeout"]

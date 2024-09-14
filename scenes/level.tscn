@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://dr4urbeiqhsqm"]
+
+[ext_resource type="PackedScene" uid="uid://c67ggmixslvjp" path="res://scenes/player.tscn" id="1_055r1"]
+[ext_resource type="Script" path="res://scenes/level.gd" id="1_coo7v"]
+[ext_resource type="PackedScene" uid="uid://7cyyt761nl1o" path="res://scenes/bg.tscn" id="2_fveg8"]
+[ext_resource type="PackedScene" uid="uid://j78e35jjui2b" path="res://scenes/ui.tscn" id="6_3owev"]
+[ext_resource type="AudioStream" uid="uid://28bj3oq5d1ry" path="res://Sounds/theme.wav" id="7_y5mnm"]
+[ext_resource type="PackedScene" uid="uid://d8kxk7umkaai" path="res://scenes/pause_menu.tscn" id="8_a4l08"]
+
+[node name="Level" type="Node2D"]
+script = ExtResource("1_coo7v")
+
+[node name="Background Movement" parent="." instance=ExtResource("2_fveg8")]
+
+[node name="player" parent="." instance=ExtResource("1_055r1")]
+
+[node name="Asteroids" type="Node2D" parent="."]
+
+[node name="Lasers" type="Node2D" parent="."]
+
+[node name="AsteroidTimer" type="Timer" parent="."]
+wait_time = 0.25
+autostart = true
+
+[node name="UI" parent="." instance=ExtResource("6_3owev")]
+
+[node name="Theme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_y5mnm")
+volume_db = -9.0
+autoplay = true
+bus = &"Music"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("8_a4l08")]
+visible = false
+
+[connection signal="laser" from="player" to="." method="_on_player_laser"]
+[connection signal="timeout" from="AsteroidTimer" to="." method="_on_asteroid_timer_timeout"]
